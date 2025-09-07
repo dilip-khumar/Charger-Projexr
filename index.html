@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Charger Projex — Projects for College Students</title>
+  <meta name="description" content="Charger Projex — Fast, professional projects for engineering, arts & science students. Delivered within 3 working days." />
+  
+  <!-- Font Awesome for Social Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg-1: #060914;
+      --accent: #00e0a8;
+      --accent-2: #6aa3ff;
+      --text: #e6eef6;
+      --muted: #9fb3c8;
+      --radius: 14px;
+      --transition: 370ms cubic-bezier(.2,.9,.3,1);
+      --max-width: 1100px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    body{
+      margin:0;
+      background: var(--bg-1);
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    canvas#circuit-bg {
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    .container{max-width:var(--max-width); margin:0 auto; padding:0 20px; position:relative; z-index:5}
+
+    header{
+      position:relative;
+      margin:12px auto; border-radius:18px; padding:12px; width:calc(100% - 40px);
+      display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+      transition: all 300ms ease;
+    }
+    header.sticky{
+      position:fixed; top:0; left:50%; transform:translateX(-50%);
+      width:calc(100% - 40px); z-index:40; backdrop-filter: blur(8px) saturate(120%);
+    }
+
+    .brand{ display:flex; align-items:center; gap:14px; }
+    .logo{
+      width:68px; height:68px; border-radius:50%; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 8px 30px rgba(0,0,0,0.6), inset 0 -6px 18px rgba(255,255,255,0.06);
+      flex-shrink:0; transition:transform var(--transition);
+    }
+    .logo:hover{ transform:rotate(-6deg) scale(1.05); }
+    .logo img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+    .title-wrap{ text-align:center; }
+    .company-name{ font-size:20px; font-weight:700; }
+    .company-quote{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+    .social-inline{ display:flex; gap:12px; margin-left:28px; align-items:center; }
+    .icon-btn{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,0.05); cursor:pointer; transition:transform var(--transition), background var(--transition);
+      border:1px solid rgba(255,255,255,0.05); font-size:20px; color:var(--accent-2);
+    }
+    .icon-btn:hover{ transform:translateY(-6px) scale(1.1) rotate(6deg); background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 0 18px var(--accent-2); }
+
+    @media (min-width:820px){ header{ justify-content:space-between; padding:18px 26px; } }
+
+    .hero{ padding:44px 0 36px; display:flex; gap:28px; align-items:center; }
+    .webinar-card{ position:relative; border-radius:16px; overflow:hidden; cursor:pointer; transition:transform var(--transition); }
+    .webinar-card:hover{ transform:translateY(-8px) scale(1.03); }
+    .webinar-card img{ width:100%; display:block; height:260px; object-fit:cover; }
+
+    .pitch{ margin-top:18px; }
+    .chips{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+    .chip{ padding:8px 12px; border-radius:12px; background:rgba(255,255,255,0.05); font-weight:600; transition: transform var(--transition); }
+    .chip:hover{ transform:scale(1.1) rotate(-3deg); }
+
+    .section{ padding:46px 0; }
+    .projects-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; }
+    .project{ background:rgba(255,255,255,0.02); border-radius:14px; padding:14px; box-shadow:0 10px 30px rgba(3,7,18,0.6); transition:transform var(--transition), box-shadow var(--transition), opacity 0.6s ease; overflow:hidden; opacity:0; transform:translateY(40px); }
+    .project:hover{ transform:translateY(-10px) scale(1.02); box-shadow:0 30px 60px rgba(3,7,18,0.75); }
+    .project img{ width:100%; height:150px; object-fit:cover; border-radius:8px; }
+
+    .testimonials{ margin-top:18px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+    .testimonial{ flex:1; background:rgba(255,255,255,0.05); border-radius:12px; padding:12px; font-size:14px; color:var(--muted); box-shadow:inset 0 -4px 12px rgba(255,255,255,0.02); opacity:0; transform:translateY(20px); transition: all 0.7s ease; }
+
+    footer{ padding:28px 0; text-align:center; color:var(--muted); }
+    .broadcast {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 50px 20px;
+}
+
+.broadcast-card {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #25D366;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(37, 211, 102, 0.7);
+  animation: floatGlow 4s ease-in-out infinite;
+}
+
+.broadcast-card h2 {
+  color: #25D366;
+  margin-bottom: 15px;
+}
+
+.broadcast-card p {
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.broadcast-btn {
+  display: inline-block;
+  background: #25D366;
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(37, 211, 102, 0.8);
+}
+
+.broadcast-btn:hover {
+  background: #1ebe5d;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(37, 211, 102, 1);
+}
+
+@keyframes floatGlow {
+  0%, 100% { transform: translateY(0); box-shadow: 0 0 20px rgba(37, 211, 102, 0.7); }
+  50% { transform: translateY(-8px); box-shadow: 0 0 30px rgba(37, 211, 102, 1); }
+}
+#reviews {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+#reviews h2 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: #0ff;
+  text-shadow: 0 0 15px rgba(0,255,255,0.6);
+}
+
+.reviews-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.review-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(0,255,255,0.3);
+  border-radius: 15px;
+  padding: 20px;
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0,255,255,0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 0 25px rgba(0,255,255,0.6);
+}
+
+.review-card p {
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.review-card h4 {
+  color: #0ff;
+  font-weight: bold;
+}
+
+
+  </style>
+</head>
+<body>
+  <canvas id="circuit-bg"></canvas>
+
+  <header id="site-header" class="container">
+    <div class="brand">
+      <div class="logo">
+        <img src="logi.png" alt="Charger Projex Logo">
+      </div>
+      <div class="title-wrap">
+        <div class="company-name">Charger Projex</div>
+        <div class="company-quote">"Your Project, Our Passion! — Delivered in 3 working days"</div>
+      </div>
+    </div>
+    <div class="social-inline">
+      <a class="icon-btn" href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a class="icon-btn" href="chargerprojex@gmil.com"><i class="fa-solid fa-envelope"></i></a>
+      <a class="icon-btn" href="https://www.instagram.com/charger_projex/?utm_source=qr&igsh=MWp6Y3p3aGMzdTg0MQ%3D%3D#" target="_blank"><i class="fab fa-instagram"></i></a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="webinar-card" id="webinar">
+        <img src="web.png" alt="Webinar">
+      </div>
+      <div class="pitch">
+        <p>Delivered within 3 working days</p>
+        <p>get assistance over project after completion of project for free</p>
+        <p>you get toplevel outputs from us , since we use only professional </p>
+        <p>wide range of domain projects @ low fee</p>
+        <div class="chips">
+          <div class="chip">ECE</div><div class="chip">CSE / IT</div><div class="chip">EEE</div><div class="chip">Mech</div>
+        </div>
+      </div>
+    </section>
+    <section class="broadcast">
+  <div class="broadcast-card">
+    <h2>📢 Join Our WhatsApp Broadcast Channel</h2>
+    <p>Stay updated with the latest project updates, free webinars, and offers.</p>
+    <a href="https://whatsapp.com/channel/0029Vb6P7O3HltYBif7obQ1t" target="_blank" class="broadcast-btn">
+      <i class="fab fa-whatsapp"></i> Join Now
+    </a>
+  </div>
+</section>
+
+
+    <section id="projects" class="section">
+      <h2>Our Projects</h2>
+      <div class="projects-grid">
+        <article class="project"><img src="https://images.unsplash.com/photo-1581090700227-3e7d7fbf3f3b?q=80" alt="Smart Home Project"><div>IoT Smart Home (CSE)</div></article>
+        <article class="project"><img src="https://images.unsplash.com/photo-1604079621647-5f8a2a1a7b99?q=80" alt="Embedded"><div>Embedded Traffic Light System (ECE)</div></article>
+        <article class="project"><img src="https://images.unsplash.com/photo-1603791440384-56cd371ee9a7?q=80" alt="Mechanical"><div>Automated Bottle Filler (Mech)</div></article>
+        <article class="project"><img src="https://images.unsplash.com/photo-1526378722817-6a1f0a3d3a98?q=80" alt="AI ML 1"><div>Handwritten Digit Classifier (AI/ML)</div></article>
+        <article class="project"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80" alt="AI ML 2"><div>Image Captioning System (AI/ML)</div></article>
+        <article class="project"><img src="https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80" alt="AI ML 3"><div>Sentiment Analyzer (AI/ML)</div></article>
+      </div>
+      <div class="testimonials">
+        <section id="reviews">
+  <h2>What Our Customers Say</h2>
+  <div class="reviews-container">
+    <div class="review-card">
+      <p>“Charger Projex delivered my final year ECE project in just 3 days. The quality and support were outstanding!”</p>
+      <h4>- Priya S., ECE Student</h4>
+    </div>
+    <div class="review-card">
+      <p>“I was struggling with my thesis, but their team guided me and provided a complete solution on time.”</p>
+      <h4>- Arjun K., M.Tech Scholar</h4>
+    </div>
+    <div class="review-card">
+      <p>“Their AI/ML project implementation was seamless. I even presented it at my college symposium successfully!”</p>
+      <h4>- Sneha R., CSE Student</h4>
+    </div>
+    <div class="review-card">
+      <p>“Professional, fast, and highly reliable. I got my mechanical project with working prototype ahead of deadline.”</p>
+      <h4>- Rohit M., Mechanical Engineering</h4>
+    </div>
+    <div class="review-card">
+      <p>“Great experience! The team not only made my project but also explained it clearly for my viva.”</p>
+      <h4>- Ananya P., B.Sc Computer Science</h4>
+    </div>
+  </div>
+</section>
+
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">Thanks for choosing us<br/>© Charger Projex</div>
+  </footer>
+
+  <script>
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', ()=>{
+      if(window.scrollY > 80){ header.classList.add('sticky'); } else { header.classList.remove('sticky'); }
+    });
+
+    const observer = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){ e.target.style.opacity=1; e.target.style.transform='translateY(0)'; }
+      });
+    }, {threshold:0.12});
+    document.querySelectorAll('.project, .testimonial').forEach(el=> observer.observe(el));
+
+    document.getElementById('webinar').addEventListener('click', ()=> window.open('https://forms.gle/your-link','_blank'));
+
+    const canvas = document.getElementById('circuit-bg');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+
+    function resize(){
+      w = canvas.width = window.innerWidth * devicePixelRatio;
+      h = canvas.height = window.innerHeight * devicePixelRatio;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const nodes = [];
+    const NODE_COUNT = Math.max(60, Math.floor((window.innerWidth*window.innerHeight)/90000));
+    for(let i=0;i<NODE_COUNT;i++){
+      nodes.push({
+        x:Math.random()*window.innerWidth,
+        y:Math.random()*window.innerHeight,
+        r:Math.random()*2.2+0.8,
+        dx:(Math.random()-0.5)*0.6,
+        dy:(Math.random()-0.5)*0.6
+      });
+    }
+
+    const green = {r:0, g:224, b:168};
+    const blue = {r:106, g:163, b:255};
+
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function mixColor(t){
+      return {
+        r: Math.round(lerp(green.r, blue.r, t)),
+        g: Math.round(lerp(green.g, blue.g, t)),
+        b: Math.round(lerp(green.b, blue.b, t))
+      };
+    }
+
+    function animate(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      const time = Date.now()/1000;
+
+      const grad = ctx.createLinearGradient(0,0,window.innerWidth,window.innerHeight);
+      grad.addColorStop(0, 'rgba(2,6,23,0.08)');
+      grad.addColorStop(1, 'rgba(0,0,0,0.08)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+
+      for(let i=0;i<nodes.length;i++){
+        const n = nodes[i];
+        n.x += n.dx; n.y += n.dy;
+        if(n.x < -50) n.x = window.innerWidth + 50;
+        if(n.y < -50) n.y = window.innerHeight + 50;
+        if(n.x > window.innerWidth + 50) n.x = -50;
+        if(n.y > window.innerHeight + 50) n.y = -50;
+
+        const t = 0.5 + 0.5*Math.sin(time*0.9 + i*0.6);
+        const col = mixColor((t+1)/2);
+        const colStr = `rgba(${col.r},${col.g},${col.b},`;
+
+        for(let j=i+1;j<nodes.length;j++){
+          const m = nodes[j];
+          const dx = n.x - m.x; const dy = n.y - m.y;
+          const dist = Math.hypot(dx,dy);
+          if(dist < 140){
+            const alpha = 0.08 + (1 - dist/140) * 0.6;
+            const mixPhase = 0.5 + 0.5*Math.sin(time*0.7 + (i+j)*0.3);
+            const lineCol = mixColor(mixPhase);
+            ctx.save();
+            ctx.lineWidth = Math.max(0.3, (1 - dist/140) * 2.4);
+            ctx.strokeStyle = `rgba(${lineCol.r},${lineCol.g},${lineCol.b},${alpha})`;
+            ctx.shadowBlur = 12 * (1 - dist/140);
+            ctx.shadowColor = `rgba(${lineCol.r},${lineCol.g},${lineCol.b},${alpha})`;
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(m.x, m.y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = colStr + (0.9) + ')';
+        ctx.shadowBlur = 16;
+        ctx.shadowColor = `rgba(${col.r},${col.g},${col.b},0.9)`;
+        ctx.arc(n.x, n.y, n.r*1.6, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255,255,255,0.05)`;
+        ctx.arc(n.x, n.y, Math.max(0.8, n.r*0.6), 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>
